@@ -3,6 +3,7 @@ import os
 import re
 import sys
 import time
+import json
 from datetime import datetime, timedelta
 from distutils.version import LooseVersion
 from io import BytesIO
@@ -58,7 +59,17 @@ def local_to_utc(dt):
 
 
 def get_mpd_data(video_url):
-    req = get(video_url)
+    headers = {
+        'User-agent': 'com.google.android.youtube/19.32.34 (Linux; U; Android 12; US) gzip',
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Accept-Encoding': 'gzip, deflate',
+        'x-goog-api-format-version': '2',
+        'x-youtube-client-name': '3',
+        'x-youtube-client-version': '19.32.34'
+    }
+
+    req = get(video_url, headers=headers)
+
     if 'dashManifestUrl\\":\\"' in req.text:
         mpd_link = req.text.split('dashManifestUrl\\":\\"')[-1].split('\\"')[0].replace("\/", "/")
     elif 'dashManifestUrl":"' in req.text:
